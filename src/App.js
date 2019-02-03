@@ -5,6 +5,7 @@ import Routes from './routers';
 import { withStyles } from '@material-ui/core/styles';
 import { getUser } from './modules/auth';
 
+
 const styles = theme => ({
 });
 class App extends Component {

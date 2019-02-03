@@ -18,8 +18,8 @@ const auth = (ComposedComponent) => {
       router: PropTypes.object,
     }
     render() {
-      if (this.props.authenticated) {
-        return <ComposedComponent {...this.props} />;
+      if (this.props.authenticated && this.props.user) {
+        return <ComposedComponent {...this.props} user={this.props.user} />;
       }
       return <div />;
     }
@@ -28,6 +28,7 @@ const auth = (ComposedComponent) => {
   function mapStateToProps(state) {
     return {
       authenticated: state.auth.authenticated,
+      user: state.auth.user,
     };
   }
   return connect(mapStateToProps)(Authentication);

@@ -10,7 +10,18 @@ const userSchema = new Schema({
 	email: { type: String, unique: true, required: false },
   password: { type: String, unique: false, required: false },
   fullname: { type: String, unique: false, required: false },
+  imageUrl: { type: String, unique: false, required: false },
+  isVerified: { type: Boolean, unique: false, required: false, default: false },
+  verificationCode: { type: String, unique: false, required: false },
 
+}, {
+  toJSON: {
+    transform: function (doc, ret) {
+      delete ret.isVerified;
+      delete ret.password;
+      delete ret.verificationCode;
+    }
+  }
 })
 
 // Define schema methods

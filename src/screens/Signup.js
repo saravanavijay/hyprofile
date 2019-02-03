@@ -14,7 +14,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Layout from '../components/Layout';
 import FacebookButton from '../components/FacebookButton';
 import { validateEmail } from '../utils/validator';
-import { registerUser } from '../modules/auth';
+import { registerUser, socialLogin } from '../modules/auth';
 
 const styles = theme => ({
   avatar: {
@@ -64,7 +64,7 @@ class Signup extends Component {
   }
 
   responseFacebook = (response) => {
-    console.log(response);
+    this.props.socialLogin(response);
   }
 
   render() {
@@ -123,6 +123,7 @@ const mapStateToProps = (state, props) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     registerUser: (props) => dispatch(registerUser(props)),
+    socialLogin: (props) => dispatch(socialLogin(props)),
   }
 }
 

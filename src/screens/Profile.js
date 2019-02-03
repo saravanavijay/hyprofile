@@ -10,11 +10,13 @@ import InputLabel from '@material-ui/core/InputLabel';
 import CameraIcon from '@material-ui/icons/CameraAlt';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
+import ReactFilestack from 'filestack-react';
 
 import Layout from '../components/Layout';
 import { validateEmail } from '../utils/validator';
+import getter from '../utils/getter';
 
-import {testApi} from '../modules/data/user';
+import { updateUser, updateUserImage } from '../modules/data/user';
 
 const styles = theme => ({
   avatar: {
@@ -39,17 +41,21 @@ const styles = theme => ({
 
 class Profile extends Component {
 
-  state = {
-    email: 'saravana.vijay.kumar@gmail.com',
-    emailError: null,
-  };
-
-  componentDidMount(){
-    this.props.testApi();
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: props.user.email,
+      emailError: null,
+      isEditing: false,
+    };
   }
-
   handleEmailChange = event => {
-    this.setState({ email: event.target.value, emailError: null });
+    let isEditing = true;
+    const email = event.target.value;
+    if (this.props.user.email === email) {
+      isEditing = false;
+    }
+    this.setState({ email: event.target.value, emailError: null, isEditing });
   };
 
   handleSubmit = (event) => {
@@ -60,35 +66,58 @@ class Profile extends Component {
       this.setState({ emailError: 'Email entered is Invalid.' });
       return;
     }
+    this.props.updateUser({ email });
   }
 
-  responseFacebook = (response) => {
-    console.log(response);
+  onSuccess = (result) => {
+    console.log(result);
+    if (result && result.filesUploaded && result.filesUploaded.length > 0) {
+      const imageUrl = getter(['url'], result.filesUploaded[0]) || null;
+      this.props.updateUserImage({ imageUrl });
+    }
+  }
+  onError = (error) => {
+
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, user } = this.props;
     return (
       <Layout>
+        {
+          <ReactFilestack
+            apikey={'AtwBRJqLQSnm8oQWHy13Dz'}
+            options={{
+              accept: 'image/*',
+              maxFiles: 1,
+              storeTo: {
+                location: 's3',
+              },
+            }}
+            onSuccess={this.onSuccess}
+            onError={this.onError}
+            render={({ onPick }) => {
+              if (user.imageUrl) {
+                return (
+                  <Avatar className={classes.avatar} src={user.imageUrl} onClick={onPick} />
+                )
+              }
+              return (
+                <Avatar className={classes.avatar} onClick={onPick}>
+                  <CameraIcon />
+                </Avatar>
+              )
+            }}
+          />
+        }
 
-        <input
-          accept="image/*"
-          className={classes.input}
-          id="text-button-file"
-          type="file"
-        />
-        <label htmlFor="text-button-file">
-          <Avatar className={classes.avatar}>
-            <CameraIcon />
-          </Avatar>
-        </label>
-        <Typography component="h1" variant="h5">
-          {'Saravana Vijay'}
+        <Typography component="h1" variant="h6" align="center">
+          Welcome {user.fullname}
         </Typography>
         <form className={classes.form} onSubmit={this.handleSubmit}>
           <FormControl margin="normal" required fullWidth error={this.state.emailError}>
             <InputLabel htmlFor="email">Email Address</InputLabel>
-            <Input id="email" name="email" value={this.state.email} onChange={this.handleEmailChange} autoComplete="email" autoFocus />
+            <Input id="email" name="email" value={this.state.email} onChange={this.handleEmailChange} autoComplete="email" />
             {
               this.state.emailError &&
               (<FormHelperText id="component-error-text">{this.state.emailError}</FormHelperText>)
@@ -100,6 +129,7 @@ class Profile extends Component {
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={!this.state.isEditing}
           >
             Update
           </Button>
@@ -119,7 +149,8 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    testApi: (props) => dispatch(testApi(props)),
+    updateUser: (props) => dispatch(updateUser(props)),
+    updateUserImage: (props) => dispatch(updateUserImage(props)),
   }
 }
 

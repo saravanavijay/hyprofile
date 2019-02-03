@@ -28,7 +28,6 @@ function FacebookButton(props) {
   return (
     <FacebookLogin
       appId="539118179905747"
-      autoLoad={true}
       fields="name,email,picture"
       cssClass={classes.fbButton}
       // onClick={componentClicked}

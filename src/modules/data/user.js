@@ -1,33 +1,5 @@
 import axios from 'axios';
-import { APP_URI } from '../../config';
-import AuthHeaders from '../shared/header';
-
-const apiEndpoints = {
-  TEST_API: '/api/user',
-  UPDATE_USER: `${APP_URI}/update`,
-};
-
-
-// ------------------------------------
-// Constants
-// ------------------------------------
-
-export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
-
-// ------------------------------------
-// Actions
-// ------------------------------------
-
-const updateUserSuccess = (props) => ({
-  type: UPDATE_USER_SUCCESS,
-  user: props.user,
-});
-
-
-export const actions = {
-  updateUserSuccess,
-};
-
+import { actions, apiEndpoints } from '../auth';
 
 // ------------------------------------
 // API Wrapper
@@ -61,16 +33,18 @@ export const testApi = (props) => {
   }
 };
 
-export const updateUser = (props) => {
+
+export const updateUserImage = (props) => {
   return async (dispatch) => {
     try {
-      const res = await axios.get(
-        `${apiEndpoints.UPDATE_USER}`,
-        AuthHeaders(),
+      const res = await axios.put(
+        `${apiEndpoints.USER}`,
+        props,
       );
       const result = res.data;
-      if (result) {
-        dispatch(actions.updateUserSuccess({ user: result }));
+      console.log(result);
+      if (result.success) {
+        dispatch(actions.userUpdated( { user: result.user }));
       }
     } catch (error) {
 
@@ -78,17 +52,20 @@ export const updateUser = (props) => {
   }
 };
 
-// ------------------------------------
-// Reducers
-// ------------------------------------
-
-export default (state = { }, action) => {
-  switch (action.type) {
-    case UPDATE_USER_SUCCESS:
-      {
-        return { ...state, user: { ...state.user, ...action.user }, error: null };
+export const updateUser = (props) => {
+  return async (dispatch) => {
+    try {
+      const res = await axios.patch(
+        `${apiEndpoints.USER}`,
+        props,
+      );
+      const result = res.data;
+      console.log(result);
+      if (result.success) {
+        dispatch(actions.userUpdated( { user: result.user }));
       }
-    default:
-      return state;
+    } catch (error) {
+
+    }
   }
 };
