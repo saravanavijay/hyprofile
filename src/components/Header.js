@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import { withRouter, Link } from 'react-router-dom';
+
+import { logout } from '../modules/auth';
 
 const styles = {
   root: {
@@ -16,11 +19,21 @@ const styles = {
 };
 
 class Header extends Component {
+
+  handleLogout = () => {
+    this.props.logout();
+  }
+
   render() {
     const { classes } = this.props;
     const { pathname } = this.props.location;
     console.log(pathname);
     const ActionButton = () => {
+      if (this.props.authenticated) {
+        return (
+          <Button color="inherit" onClick={this.handleLogout} >Logout</Button>
+        )
+      }
       if (pathname === '/signup') {
         return (
           <Button color="inherit" component={Link} to="/login" >Login</Button>
@@ -48,4 +61,16 @@ Header.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withRouter(withStyles(styles)(Header));
+function mapStateToProps(state) {
+  return {
+    authenticated: state.auth.authenticated,
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logout: () => dispatch(logout()),
+  }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Header)));

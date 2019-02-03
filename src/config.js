@@ -1,1 +1,1 @@
-export const APP_URI = `https://api.unsplash.com`;
+export const APP_URI = `/`;

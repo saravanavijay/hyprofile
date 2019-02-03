@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -15,6 +16,8 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Layout from '../components/Layout';
 import FacebookButton from '../components/FacebookButton';
 import { validateEmail } from '../utils/validator';
+
+import { login } from '../modules/auth';
 
 const styles = theme => ({
   avatar: {
@@ -55,6 +58,7 @@ class Login extends Component {
       this.setState({ emailError: 'Email entered is Invalid.' });
       return;
     }
+    this.props.login({ email, password });
   }
 
   responseFacebook = (response) => {
@@ -108,4 +112,15 @@ Login.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Login);
+const mapStateToProps = (state, props) => {
+  return {
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    login: (props) => dispatch(login(props)),
+  }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Login));

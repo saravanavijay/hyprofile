@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -12,6 +13,8 @@ import withStyles from '@material-ui/core/styles/withStyles';
 
 import Layout from '../components/Layout';
 import { validateEmail } from '../utils/validator';
+
+import {testApi} from '../modules/data/user';
 
 const styles = theme => ({
   avatar: {
@@ -34,12 +37,16 @@ const styles = theme => ({
   },
 });
 
-class Login extends Component {
+class Profile extends Component {
 
   state = {
     email: 'saravana.vijay.kumar@gmail.com',
     emailError: null,
   };
+
+  componentDidMount(){
+    this.props.testApi();
+  }
 
   handleEmailChange = event => {
     this.setState({ email: event.target.value, emailError: null });
@@ -102,8 +109,18 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
+Profile.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Login);
+const mapStateToProps = (state) => {
+  return {
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    testApi: (props) => dispatch(testApi(props)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Profile));

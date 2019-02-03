@@ -8,6 +8,9 @@ import Login from '../screens/Login';
 import Signup from '../screens/Signup';
 import Profile from '../screens/Profile';
 
+import auth from '../hoc/Authentication';
+import noAuth from '../hoc/NoAuth';
+
 
 class RouterComponent extends Component {
   render() {
@@ -15,9 +18,9 @@ class RouterComponent extends Component {
       <Router>
         <div>
           <Route component={Header} />
-          <Route path="/login" exact component={Login} />
-          <Route path="/signup" exact component={Signup} />
-          <Route path="/" exact component={Profile} />
+          <Route path="/login" exact component={noAuth(Login)} />
+          <Route path="/signup" exact component={noAuth(Signup)} />
+          <Route path="/" exact component={auth(Profile)} />
           <Route component={Footer} />
         </div>
       </Router>

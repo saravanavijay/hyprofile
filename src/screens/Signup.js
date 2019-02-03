@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
@@ -13,7 +14,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Layout from '../components/Layout';
 import FacebookButton from '../components/FacebookButton';
 import { validateEmail } from '../utils/validator';
-
+import { registerUser } from '../modules/auth';
 
 const styles = theme => ({
   avatar: {
@@ -52,12 +53,14 @@ class Signup extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const { email, password } = this.state;
+    const { fullname, email, password } = this.state;
     const isEmailValid = validateEmail(email);
     if (!isEmailValid) {
       this.setState({ emailError: 'Email entered is Invalid.' });
       return;
     }
+    this.props.registerUser({ fullname, email, password })
+
   }
 
   responseFacebook = (response) => {
@@ -112,4 +115,15 @@ Signup.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Signup);
+const mapStateToProps = (state, props) => {
+  return {
+    filteredPhotos: [],
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    registerUser: (props) => dispatch(registerUser(props)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Signup));

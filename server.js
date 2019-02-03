@@ -1,10 +1,37 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const session = require('express-session');
+const dbConnection = require('./server/db') 
+const MongoStore = require('connect-mongo')(session);
+const passport = require('./server/passport');
+// Route requires
+const user = require('./server/routes/user');
+
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 5000;
+
+app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Sessions
+app.use(
+	session({
+		secret: 'general-kenobi', //pick a random string to make the hash that is generated secure
+		store: new MongoStore({ mongooseConnection: dbConnection }),
+		resave: false, //required
+		saveUninitialized: false //required
+	})
+)
+
+// Passport
+app.use(passport.initialize())
+app.use(passport.session())
+
+// Routes
+app.use('/api/user/', user)
 
 app.get('/api/hello', (req, res) => {
   res.send({ express: 'Hello From Express' });
