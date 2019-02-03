@@ -26,6 +26,9 @@
     "concurrently": "^3.5.1",
     "nodemon": "^1.17.5"
   },
+  "resolutions": {
+    "terser": "3.14.1"
+  },
   "scripts": {
     "start-client": "react-scripts start",
     "build": "react-scripts build",
