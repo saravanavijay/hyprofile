@@ -30,6 +30,9 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3,
     color: 'white',
   },
+  errorDiv: {
+    color: '#ee443c',
+  }
 });
 
 class Login extends Component {
@@ -64,7 +67,7 @@ class Login extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, loginFailed } = this.props;
     return (
       <Layout>
         <Avatar className={classes.avatar}>
@@ -74,6 +77,14 @@ class Login extends Component {
           Login
         </Typography>
         <form className={classes.form} onSubmit={this.handleSubmit}>
+          {
+            loginFailed &&
+            (
+              <Typography variant="body1" className={classes.errorDiv} gutterBottom>
+                {loginFailed}
+              </Typography>
+            )
+          }
           <FormControl margin="normal" required fullWidth error={this.state.emailError}>
             <InputLabel htmlFor="email">Email Address</InputLabel>
             <Input id="email" name="email" value={this.state.email} onChange={this.handleEmailChange} autoComplete="email" autoFocus />
@@ -108,6 +119,7 @@ Login.propTypes = {
 
 const mapStateToProps = (state, props) => {
   return {
+    loginFailed: state.auth.loginFailed,
   }
 }
 const mapDispatchToProps = (dispatch) => {

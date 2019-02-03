@@ -11,7 +11,6 @@ class VerifyEmail extends Component {
 
   componentDidMount(){
     const verifyCode = getter(['match', 'params', 'code'], this.props);
-    console.log(this.props);
     if (verifyCode && verifyCode.length > 0) {
       this.props.verifyUser({verifyCode}).then(() => {
         this.props.history.push('/');

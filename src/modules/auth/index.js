@@ -12,6 +12,8 @@ export const apiEndpoints = {
 // ------------------------------------
 
 export const AUTHENTICATED_USER = 'AUTHENTICATED_USER';
+export const LOGIN_FAILED = 'LOGIN_FAILED';
+export const SIGNUP_FAILED = 'SIGNUP_FAILED';
 export const UNAUTHENTICATED_USER = 'UNAUTHENTICATED_USER';
 export const USER_UPDATED = 'USER_UPDATED';
 
@@ -28,6 +30,16 @@ const unauthenticatedUser = () => ({
   type: UNAUTHENTICATED_USER,
 });
 
+const loginFailed = (props) => ({
+  type: LOGIN_FAILED,
+  message: props.message,
+});
+
+const signupFailed = (props) => ({
+  type: SIGNUP_FAILED,
+  message: props.message,
+});
+
 const userUpdated = (props) => ({
   type: USER_UPDATED,
   user: props.user,
@@ -38,6 +50,8 @@ export const actions = {
   authenticatedUser,
   unauthenticatedUser,
   userUpdated,
+  loginFailed,
+  signupFailed,
 };
 
 
@@ -80,7 +94,10 @@ export const registerUser = (props) => {
         // dispatch(actions.authenticatedUser({ user: result.user }));
       }
     } catch (error) {
-      processError(error, dispatch);
+      const statusCode = error.response ? error.response.status : 0;
+      if (statusCode === 401) {
+        dispatch(actions.signupFailed({ message: error.response.data.message }));
+      }
     }
   }
 };
@@ -100,7 +117,11 @@ export const login = (props) => {
         // dispatch(actions.authenticatedUser({ user: result.user }));
       }
     } catch (error) {
-      processError(error, dispatch);
+      const statusCode = error.response ? error.response.status : 0;
+      console.log(error.response);
+      if (statusCode === 401) {
+        dispatch(actions.loginFailed({ message: 'Invalid email or password' }));
+      }
     }
   }
 };
@@ -221,11 +242,15 @@ const processError = (error = {}, dispatch) => {
 export default (state = {}, action) => {
   switch (action.type) {
     case AUTHENTICATED_USER:
-      return { ...state, authenticated: true, user: action.user, error: '' };
+      return { ...state, authenticated: true, user: action.user, loginFailed: null, signupFailed: null };
     case UNAUTHENTICATED_USER:
-      return { ...state, authenticated: false, user: null, error: '' };
+      return { ...state, authenticated: false, user: null, loginFailed: null, signupFailed: null };
     case USER_UPDATED:
-      return { ...state, user: { ...state.user, ...action.user } };
+      return { ...state, user: { ...state.user, ...action.user, loginFailed: null, signupFailed: null } };
+    case LOGIN_FAILED:
+      return { ...state, loginFailed: action.message, signupFailed: null };
+    case SIGNUP_FAILED:
+      return { ...state, signupFailed: action.message, loginFailed: null, };
     default:
       return state;
   }

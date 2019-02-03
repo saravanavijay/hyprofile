@@ -17,8 +17,8 @@ router.post('/', (req, res) => {
     if (err) {
       console.log('User.js post error: ', err)
     } else if (user) {
-      res.json({
-        error: `Sorry, already a user with the email: ${email}`
+      res.status(401).json({
+        message: `Sorry, email already taken.`
       })
     }
     else {

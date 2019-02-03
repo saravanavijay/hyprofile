@@ -27,7 +27,6 @@ class Header extends Component {
   render() {
     const { classes } = this.props;
     const { pathname } = this.props.location;
-    console.log(pathname);
     const ActionButton = () => {
       if (this.props.authenticated) {
         return (
