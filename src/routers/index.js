@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 
 import Login from '../screens/Login';
 import Signup from '../screens/Signup';
+import Profile from '../screens/Profile';
 
 
 class RouterComponent extends Component {
@@ -16,7 +17,7 @@ class RouterComponent extends Component {
           <Route component={Header} />
           <Route path="/login" exact component={Login} />
           <Route path="/signup" exact component={Signup} />
-          <Route path="/" exact component={Login} />
+          <Route path="/" exact component={Profile} />
           <Route component={Footer} />
         </div>
       </Router>
